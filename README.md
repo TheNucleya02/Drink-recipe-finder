@@ -1,82 +1,114 @@
-<p align="center">
-<img src="static/myApp/images/screenshot.png" alt="App Screenshot" width="300" height="auto" >
-</p>
+# Drink Recipe Finder
 
-# 🍸 Drink Recipe Finder & Social Platform
+![CI/CD Pipeline](https://img.shields.io/badge/CI%2FCD-GitHub%20Actions-brightgreen)
+![Python](https://img.shields.io/badge/Python-3.9+-blue)
+![Django](https://img.shields.io/badge/Django-4.0+-darkgreen)
+![Docker](https://img.shields.io/badge/Docker-Enabled-blue)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-[![CI/CD Pipeline](https://github.com/AsHkAn-Django/Drink-Recipe-Finder-with-Favorites-Reviews/actions/workflows/deploy.yml/badge.svg)](https://github.com/AsHkAn-Django/Drink-Recipe-Finder-with-Favorites-Reviews/actions/workflows/deploy.yml)
-![Python](https://img.shields.io/badge/python-3.11-blue.svg)
-![Django](https://img.shields.io/badge/django-5.1-green.svg)
-![Docker](https://img.shields.io/badge/docker-ready-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)
+A production-grade, containerized web application that bridges real-time cocktail data from TheCocktailDB API with local persistence, enabling users to discover drinks, save favorites, and share reviews.
 
-A production-grade, containerized web application that bridges external API data with local user persistence. This project demonstrates a **Hybrid Data Architecture**, merging real-time data fetching from **TheCocktailDB** with a local PostgreSQL database for social features like favorites and reviews.
+## 🎯 Overview
 
-It is built with **DevOps best practices**, featuring a fully automated CI/CD pipeline, strict linting, and a robust testing suite that mocks external dependencies.
+Drink Recipe Finder demonstrates a **Hybrid Data Architecture** that seamlessly merges external API data with local user persistence. The application features a fully automated CI/CD pipeline, containerized deployment, and comprehensive test coverage—showcasing DevOps best practices for modern web applications.
 
-## Key Engineering Features
+**Key Highlights:**
+- Real-time cocktail data from TheCocktailDB with lazy-loaded local persistence
+- Full social engine: user favorites, ratings, and reviews
+- Automated CI/CD pipeline with zero-downtime deployment
+- Production-ready Docker setup with Nginx and Gunicorn
+- Comprehensive test suite with mocked external dependencies
 
-### DevOps & Architecture
-* **Automated CI/CD Pipeline:** Built with **GitHub Actions**. Every push to `main` triggers:
-    1.  **Linting:** Flake8 & Black for code quality.
-    2.  **Testing:** Runs the full Pytest suite (Models, Views, API Integration).
-    3.  **Deployment:** If tests pass, it automatically SSHs into the VPS, pulls code, rebuilds Docker containers, and runs migrations with zero downtime.
-[![CI/CD Pipeline](https://github.com/AsHkAn-Django/Drink-Recipe-Finder-with-Favorites-Reviews/actions/workflows/deploy.yml/badge.svg)](https://github.com/AsHkAn-Django/Drink-Recipe-Finder-with-Favorites-Reviews/actions/workflows/deploy.yml)
+## 🏗️ Architecture
 
-* **Containerized Environment:** Fully Dockerized services (Web, Postgres) orchestrated via `docker-compose`.
-* **Production Serving:** Configured with **Gunicorn** behind an **Nginx** reverse proxy for security, static file handling, and load balancing.
+### Technology Stack
 
-### Backend Logic
-* **Hybrid Data Model:**
-    * **Search:** Fetches live data from TheCocktailDB API.
-    * **Persistence:** "Lazy-saving" mechanism. When a user favorites a drink, the external data is captured and saved to the local Postgres DB to reduce future API calls and enable relational features.
-* **Social Engine:** Full review system allowing users to rate (1-5 stars) and comment on drinks.
-* **Smart Aggregation:** Dynamic calculation of average ratings and review counts using Django Aggregates.
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
+| **Backend** | Django 4.0+ | Application framework |
+| **Server** | Gunicorn | WSGI application server |
+| **Web Server** | Nginx | Reverse proxy & static files |
+| **Database** | PostgreSQL 15 | Persistent storage |
+| **External API** | TheCocktailDB | Recipe data source |
+| **Testing** | Pytest + Mock | Automated quality assurance |
+| **Frontend** | Bootstrap 5 | Responsive UI framework |
 
-### Frontend
-* **Responsive UI:** Built with **Bootstrap 5** and Django Templates, ensuring a seamless experience across mobile and desktop devices.
+### System Design
 
----
-
-## System Architecture
-
-| Component | Technology | Role |
-| :--- | :--- | :--- |
-| **App Server** | Django + Gunicorn | Core Application Logic |
-| **Web Server** | Nginx | Reverse Proxy & Static Files |
-| **Database** | PostgreSQL 15 | Persistent Data (Users, Favorites, Reviews) |
-| **External API** | TheCocktailDB | Recipe Data Source |
-| **Testing** | Pytest + Mock | Automated Testing Suite |
-
----
-
-## Testing Strategy
-
-Quality is a priority. The codebase is covered by **Automated Tests** using `pytest`.
-
-* **Unit Tests:** Verifies Data Models (Recipe, Review) and custom methods.
-* **Integration Tests:** Checks View logic, permissions, and redirects.
-* **API Mocking:** We use `unittest.mock` to simulate TheCocktailDB responses. This ensures tests are:
-    * **Fast:** No real network requests.
-    * **Reliable:** Tests pass even if the external API goes down.
-    * **Deterministic:** We control the data returned (e.g., simulating missing ingredients).
-
-**Run the tests locally:**
-```bash
-docker compose exec web pytest
+```
+┌─────────────────────────────────────────┐
+│         User Browser (Frontend)         │
+│      Bootstrap 5 + Django Templates     │
+└──────────────────┬──────────────────────┘
+                   │
+┌──────────────────▼──────────────────────┐
+│       Nginx (Reverse Proxy)             │
+│    Static Files & Load Balancing        │
+└──────────────────┬──────────────────────┘
+                   │
+┌──────────────────▼──────────────────────┐
+│   Django + Gunicorn (App Server)        │
+│   • Search & Browse Recipes             │
+│   • User Authentication                 │
+│   • Favorites Management                │
+│   • Review System                       │
+└──────────────────┬──────────────────────┘
+                   │
+        ┌──────────┴──────────┐
+        │                     │
+┌───────▼────────┐  ┌────────▼────────┐
+│  PostgreSQL    │  │ TheCocktailDB   │
+│  (Local DB)    │  │  (External API) │
+│                │  │                 │
+│ • Users        │  │ • Recipes       │
+│ • Favorites    │  │ • Ingredients   │
+│ • Reviews      │  │ • Instructions  │
+└────────────────┘  └─────────────────┘
 ```
 
-## Quick Start (Docker)
-The easiest way to run this project is using Docker. This ensures the environment matches production exactly.
+## ✨ Key Features
 
-1. Clone the repository
-```Bash
-git clone [https://github.com/AsHkAn-Django/drink-recipe-finder.git](https://github.com/AsHkAn-Django/drink-recipe-finder.git)
+### 1. Hybrid Data Model
+- **Search:** Live queries to TheCocktailDB API for comprehensive recipe database
+- **Lazy-Saving:** When users favorite a drink, external data is captured and persisted locally to reduce API calls
+- **Smart Caching:** Eliminates redundant API requests for frequently accessed recipes
+
+### 2. Social Engine
+- Full review system with 1-5 star ratings
+- User comments and feedback on recipes
+- Dynamic calculation of average ratings and review counts
+- User-specific favorites list
+
+### 3. DevOps & Deployment
+- **Automated CI/CD Pipeline:** GitHub Actions orchestrates testing and deployment
+- **Zero-Downtime Deployment:** Blue-green deployment strategy with Docker
+- **Infrastructure as Code:** Docker Compose defines entire stack
+- **Production Serving:** Gunicorn behind Nginx for security and performance
+
+### 4. Responsive UI
+- Mobile-first design with Bootstrap 5
+- Seamless experience across all devices
+- Intuitive recipe browsing and management
+
+## 🚀 Quick Start
+
+### Prerequisites
+- Docker & Docker Compose (recommended)
+- Python 3.9+ (for manual installation)
+- PostgreSQL 15+ (for manual installation)
+
+### Docker Setup (Recommended)
+
+**1. Clone the Repository**
+```bash
+git clone https://github.com/AsHkAn-Django/drink-recipe-finder.git
 cd drink-recipe-finder
 ```
 
-2. Configure Environment Create a .env file in the root directory:
-```Bash
+**2. Configure Environment**
+Create a `.env` file in the root directory:
+```env
+# Django Configuration
 SECRET_KEY=your_secret_key_here
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
@@ -88,53 +120,152 @@ DB_PASSWORD=MySimplePass123
 DB_HOST=db
 ```
 
-3. Launch the Stack
-```Bash
+**3. Launch the Application**
+```bash
 docker compose up -d --build
 ```
 
-4. Run Migrations
-```Bash
+**4. Initialize Database**
+```bash
 docker compose exec web python manage.py migrate
 docker compose exec web python manage.py collectstatic --noinput
 ```
 
-The app will be available at http://localhost:8003.
-## Manual Installation (Localhost)
-If you prefer running without Docker:
-1. Setup Virtual Environment
-```Bash
+**5. Access the Application**
+Open your browser and navigate to: `http://localhost:8003`
+
+### Manual Installation (Local Development)
+
+**1. Create Virtual Environment**
+```bash
 python -m venv .venv
 source .venv/bin/activate  # Windows: .venv\Scripts\activate
 ```
 
-2. Install Dependencies
-```Bash
+**2. Install Dependencies**
+```bash
 pip install -r requirements.txt
 ```
 
-3. Run Migrations & Server
-```Bash
+**3. Configure Environment**
+Create a `.env` file with the same configuration as above (adjust `DB_HOST` to `localhost`).
+
+**4. Setup Database & Run Server**
+```bash
 python manage.py migrate
 python manage.py runserver
 ```
 
-## 📚 API Documentation
-The application exposes REST endpoints for integration.
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/v1/recipes/` | List locally saved recipes |
-| `GET` | `/api/v1/recipes/?search=margarita` | Search recipes by title |
-| `POST` | `/api/v1/favorites/` | Add a recipe to user favorites |
+The application will be available at `http://localhost:8000`
 
-## Contact & Portfolio
-Ashkan Ahrari - Backend & Deployment Specialist
+## 🧪 Testing
 
-Portfolio: [codewithashkan.com](https://codewithashkan.com/)
+This project emphasizes quality through comprehensive automated testing.
 
-GitHub: [AsHkAn-Django](https://github.com/AsHkAn-Django)
+### Testing Strategy
 
-LinkedIn: [Ashkan Ahrari](https://www.linkedin.com/in/ashkan-ahrari/)
+**Unit Tests:** Validate data models (Recipe, Review) and custom methods
+**Integration Tests:** Verify view logic, permissions, and HTTP redirects
+**API Mocking:** Uses `unittest.mock` to simulate external API responses
 
----
-I specialize in deploying scalable Django architectures. Open for contract and full-time backend roles.
+### Benefits of Mocked Tests
+- ⚡ **Fast:** No network overhead
+- 🔒 **Reliable:** Tests pass even if external API is unavailable
+- 🎯 **Deterministic:** Complete control over test data and edge cases
+
+### Running Tests
+
+```bash
+# Run all tests
+docker compose exec web pytest
+
+# Run with coverage report
+docker compose exec web pytest --cov
+
+# Run specific test file
+docker compose exec web pytest tests/test_views.py
+
+# Run tests locally (without Docker)
+pytest
+```
+
+## 📡 API Documentation
+
+The application exposes RESTful endpoints for integration and programmatic access.
+
+### Recipe Endpoints
+
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|-----------------|
+| `GET` | `/api/v1/recipes/` | List all saved recipes | Required |
+| `GET` | `/api/v1/recipes/?search=margarita` | Search recipes by title | Required |
+| `GET` | `/api/v1/recipes/{id}/` | Retrieve recipe details | Required |
+
+### Favorites Endpoints
+
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|-----------------|
+| `POST` | `/api/v1/favorites/` | Add recipe to favorites | Required |
+| `DELETE` | `/api/v1/favorites/{id}/` | Remove from favorites | Required |
+| `GET` | `/api/v1/favorites/` | List user's favorites | Required |
+
+### Review Endpoints
+
+| Method | Endpoint | Description | Authentication |
+|--------|----------|-------------|-----------------|
+| `POST` | `/api/v1/reviews/` | Create a review | Required |
+| `GET` | `/api/v1/reviews/?recipe={id}` | Get reviews for recipe | Optional |
+| `PUT` | `/api/v1/reviews/{id}/` | Update review | Owner only |
+| `DELETE` | `/api/v1/reviews/{id}/` | Delete review | Owner only |
+
+### Example Request
+
+```bash
+# Search for margarita recipes
+curl -H "Authorization: Bearer YOUR_TOKEN" \
+  "http://localhost:8003/api/v1/recipes/?search=margarita"
+
+# Add to favorites
+curl -X POST -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"recipe_id": 12345}' \
+  "http://localhost:8003/api/v1/favorites/"
+```
+
+## 🔧 CI/CD Pipeline
+
+Every push to `main` triggers an automated workflow:
+
+1. **Code Quality Checks**
+   - Flake8: Linting and style verification
+   - Black: Code formatting consistency
+
+2. **Testing Suite**
+   - Full Pytest coverage
+   - Model, view, and API integration tests
+   - Edge case validation
+
+3. **Deployment** (on success)
+   - SSH into production VPS
+   - Pull latest code
+   - Rebuild Docker containers
+   - Run migrations with zero downtime
+   - Health checks
+
+
+## 🔐 Security & Production Best Practices
+
+- **Environment Variables:** Sensitive data (SECRET_KEY, DB credentials) stored in `.env`
+- **Debug Mode:** Disabled in production
+- **Gunicorn:** Application server with worker process management
+- **Nginx:** Reverse proxy with SSL termination and security headers
+- **Database:** PostgreSQL 15 with user permissions and encrypted connections
+- **CSRF Protection:** Enabled for all state-changing operations
+- **Dependency Management:** Regular updates and security scanning
+
+
+## 📝 License
+
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+**Made with ❤️ by Aman Jha**
