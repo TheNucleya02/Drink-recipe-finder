@@ -1,0 +1,78 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  # JOB 1: Test & Lint
+  test:
+    name: Test and Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install flake8 black pytest pytest-django
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run Black (Formatting Check)
+        run: black --check .
+
+      - name: Run Flake8 (Linting)
+        run: flake8 .
+
+      - name: Run Tests
+        env:
+          DJANGO_SETTINGS_MODULE: drink_recipes.settings
+          SECRET_KEY: "dummy-secret-for-tests"
+          DEBUG: "True"
+        run: pytest
+
+  # JOB 2: Deploy to VPS
+  deploy:
+    name: Deploy to VPS
+    needs: test
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Connect and Deploy
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            cd /home/drink_recipes
+
+            # Pull latest code
+            git checkout .
+            git pull origin main
+
+            # Stop old containers to free Port 8003
+            docker compose down --remove-orphans
+
+            # Rebuild and Start
+            docker compose up -d --build
+
+            # Run Migrations & Static Files
+            # We use -T to avoid "input device is not a TTY" errors in automation
+            docker compose exec -T web python manage.py migrate
+            docker compose exec -T web python manage.py collectstatic --noinput
+
+            # Cleanup space
+            docker system prune -f
