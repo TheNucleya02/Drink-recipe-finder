@@ -14,16 +14,17 @@ from pathlib import Path
 from decouple import config
 import sys
 
+import os
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://drink-recipes.codewithashkan.com",
-    "https://www.drink-recipes.codewithashkan.com",
-    "http://123.456.78.90",
+    "https://*.onrender.com",
 ]
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
@@ -110,7 +111,7 @@ else:
             "NAME": config("DB_NAME"),
             "USER": config("DB_USER"),
             "PASSWORD": config("DB_PASSWORD"),
-            "HOST": config("DB_HOST", default="db"),
+            "HOST": config("DB_HOST"),
             "PORT": "5432",
         }
     }
