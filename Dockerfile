@@ -22,4 +22,4 @@ COPY . /app/
 
 # Run Gunicorn
 # 'drink_recipes' matches your project name in settings.py
-CMD sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn drink_recipes.wsgi:application --bind 0.0.0.0:8000"
+CMD sh -c "python manage.py migrate && python manage.py createcachetable && python manage.py collectstatic --noinput && gunicorn drink_recipes.wsgi:application --bind 0.0.0.0:8000"
