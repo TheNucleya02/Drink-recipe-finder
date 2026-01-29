@@ -19,9 +19,7 @@ RUN pip install gunicorn
 # Copy the rest of the code
 COPY . /app/
 
-# Collect static files (Optimized for Docker)
-RUN python manage.py collectstatic --noinput
 
 # Run Gunicorn
 # 'drink_recipes' matches your project name in settings.py
-CMD ["gunicorn", "drink_recipes.wsgi:application", "--bind", "0.0.0.0:8000"]
+CMD sh -c "python manage.py migrate && python manage.py collectstatic --noinput && gunicorn drink_recipes.wsgi:application --bind 0.0.0.0:8000"
