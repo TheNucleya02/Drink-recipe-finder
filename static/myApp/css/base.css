@@ -1,0 +1,43 @@
+body {
+  background-color: #d4d6d5;
+}
+
+.main-part {
+  background-color: #c7c7c7;
+}
+
+.heading-part {
+  background-color: #a6aeb3;
+}
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+@media (max-width: 576px) {
+    .heading-part {
+        padding: 2rem 1rem;
+        text-align: center;
+    }
+
+    .heading-part h1 {
+        font-size: 1.75rem;
+    }
+
+    .main-part {
+        padding: 1rem;
+    }
+
+	.list-group-item {
+        font-size: 0.875rem;
+    }
+
+    .main-part .row {
+        flex-direction: column;
+    }
+
+    .main-part img {
+        margin-bottom: 1rem;
+    }
+}

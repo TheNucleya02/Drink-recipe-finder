@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container col-xl-11 p-4 p-md-5 my-4 rounded text-body-emphasis heading-part">
+  <div class="row align-items-center">
+
+    <!-- Left Side: Introduction -->
+    <div class="col-md-6 mb-4 mb-md-0">
+      <h1 class="display-5 fw-bold text-dark">Get a Random Drink Recipe</h1>
+      <p class="fs-5">Click the button to instantly discover a new drink recipe — it's quick, fun, and completely free!</p>
+      <a href="{% url 'myApp:index' %}" class="btn btn-primary btn-lg mt-3">Bring it!</a>
+    </div>
+
+    <!-- Right Side: Features -->
+    <div class="col-md-6">
+      <h4 class="fw-semibold mb-3 text-dark">Key Features</h4>
+      <div class="row g-2">
+        <div class="col-12">
+          <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-start gap-2">
+            <span class="badge bg-primary rounded-pill small">1</span>
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark small">Search Recipes</h6>
+              <p class="mb-0 text-muted small">Explore thousands of drinks via the Cocktail DB API.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-start gap-2">
+            <span class="badge bg-primary rounded-pill small">2</span>
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark small">View Ingredients & Instructions</h6>
+              <p class="mb-0 text-muted small">Clear steps and ingredients for each recipe.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-start gap-2">
+            <span class="badge bg-primary rounded-pill small">3</span>
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark small">Save Favorites</h6>
+              <p class="mb-0 text-muted small">Store your favorite drinks in your profile.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-start gap-2">
+            <span class="badge bg-primary rounded-pill small">4</span>
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark small">Ratings & Reviews</h6>
+              <p class="mb-0 text-muted small">Leave feedback and read what others think.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-12">
+          <div class="p-2 bg-white rounded-3 shadow-sm d-flex align-items-start gap-2">
+            <span class="badge bg-primary rounded-pill small">5</span>
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark small">Average Ratings</h6>
+              <p class="mb-0 text-muted small">See how each drink scores overall.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+{% if drink %}
+
+    <div class="container col-xl-11 px-4 pt-2 pb-4 main-part">
+        <div class="row flex-lg-row-reverse align-items-center py-2">
+            <!-- Image Section -->
+            <div class="col-12 col-lg-6 text-center">
+                <img src="{{ drink.strDrinkThumb }}" class="d-block mx-auto img-fluid"
+                    alt="{{ drink.strDrink }} pic" style="max-width: 100%; height: auto;" loading="lazy">
+
+                    {% if user.is_authenticated %}
+                    <a href="{% url 'myApp:add_favorite' drink.idDrink %}" class="mt-5 btn btn-success">Add To Favorite</a>
+                    {% else %}
+                    <h4 class="my-4"><a href="{% url 'users:login' %}">Login</a> or <a href="{% url 'users:signup' %}">Signup</a> for adding this Recipe to favorites.</h4>
+                    {% endif %}
+
+            </div>
+            <!-- Content Section -->
+            <div class="col-lg-6 py-3">
+                <h5 class="display-5 lh-1 my-3 py-0 fw-bold text-dark">{{ drink.strDrink }}</h5>
+                <h5 class="text-dark">Instructions</h5>
+                <p class="text-dark">{{ drink.strInstructions }}</p>
+                <h5 class="text-dark">Category:</h5>
+                <p class="text-dark">{{ drink.strCategory }}</p>
+                <h5 class="text-dark">Ingredients</h5>
+                <ul class="list-group">
+                    {% if drink.strIngredient1 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure1 }} {{ drink.strIngredient1 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient2 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure2 }} {{ drink.strIngredient2 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient3 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure3 }} {{ drink.strIngredient3 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient4 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure4 }} {{ drink.strIngredient4 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient5 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure5 }} {{ drink.strIngredient5 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient6 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure6 }} {{ drink.strIngredient6 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient7 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure7 }} {{ drink.strIngredient7 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient8 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure8 }} {{ drink.strIngredient8 }}</li>
+                    {% endif %}
+                    {% if drink.strIngredient9 != None %}
+                    <li class="list-group-item text-bg-dark p-3">{{ drink.strMeasure9 }} {{ drink.strIngredient9 }}</li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+{% endblock content %}
